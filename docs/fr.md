@@ -79,8 +79,9 @@ trois chiffres, **Musculaires**, **Électriques** et **Places libres**.
 
 - **Vert** : il en reste assez ; **orange** : il en reste peu ; **rouge** : il n'y en a plus ;
   **gris** : la station ne loue pas (ou ne reprend pas) en ce moment.
-- Sous le nom : l'heure de la dernière mise à jour, ou l'état de la station quand elle n'est pas
-  entièrement en service (« Location suspendue »).
+- Sous le nom : le temps de marche depuis la maison, puis l'heure de la dernière mise à jour, ou
+  l'état de la station quand elle n'est pas entièrement en service (« 6 min à pied · Location
+  suspendue »).
 
 Pour l'ajouter : **Tableau de bord → Modifier → Ajouter une box → Station Le Vélo**, puis :
 
@@ -95,20 +96,30 @@ La courbe se remplit avec le temps : elle part du moment où la station a été 
 ### Widget « Carte Le Vélo »
 
 La maison et les stations sur un plan OpenStreetMap. Chaque station porte une pastille avec ses
-vélos (musculaires, puis électriques après l'éclair) ou ses places libres, dans les mêmes couleurs
-que le widget Station. Sous la carte, les mêmes stations par distance, avec leur nom.
+vélos musculaires, ses vélos électriques (après l'éclair) et ses places libres (après le P), dans
+les mêmes couleurs que le widget Station. Les pastilles se placent d'elles-mêmes pour ne pas se
+cacher entre elles, reliées à leur station par un trait. Sous la carte, les mêmes stations de la
+plus proche à pied à la plus lointaine, avec leur nom et leur temps de marche.
 
 Pour l'ajouter : **Tableau de bord → Modifier → Ajouter une box → Carte Le Vélo**, puis :
 
 | Réglage             | Effet                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------- |
 | Stations            | **Mes stations** (celles ajoutées, par défaut) ou **Près de chez moi** (rayon de recherche) |
-| Afficher            | **Vélos** (par défaut) ou **Places libres**                                                 |
+| Afficher            | **Tout** (par défaut), **Vélos** seulement ou **Places libres** seulement                   |
 | « Peu » à partir de | Orange à ce nombre ou moins (2 par défaut)                                                  |
 
 La carte est une image : on ne peut pas zoomer ni cliquer dessus. Le cadrage se fait tout seul
 pour montrer la maison et toutes les stations (10 au plus). Le fond de plan est téléchargé une fois
 chez OpenStreetMap puis gardé 30 jours dans le conteneur.
+
+### Temps de marche
+
+Le temps de marche de la maison à chaque station est calculé par les rues par
+[Transitous](https://transitous.org), le service communautaire gratuit qu'utilise aussi
+l'intégration TBM. Il est demandé une seule fois par station et gardé dans le conteneur : il n'est
+recalculé que si l'adresse de la maison change. En attendant sa réponse (ou s'il ne répond pas),
+le temps affiché est une estimation à vol d'oiseau, précédée de « ≈ ».
 
 ## Scènes
 

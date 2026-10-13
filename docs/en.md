@@ -75,8 +75,8 @@ The **Le Vélo station** widget shows a station at a glance: its name, then thre
 
 - **Green**: enough left; **orange**: few left; **red**: none left; **grey**: the station does not
   rent (or take bikes back) right now.
-- Under the name: the time of the last update, or the state of the station when it is not fully in
-  service ("Rentals suspended").
+- Under the name: the walking time from the house, then the time of the last update, or the state
+  of the station when it is not fully in service ("6 min walk · Rentals suspended").
 
 To add it: **Dashboard → Edit → Add a box → Le Vélo station**, then:
 
@@ -91,19 +91,29 @@ The chart fills up over time: it starts when the station was added.
 ### "Le Vélo map" widget
 
 The house and the stations on an OpenStreetMap background. Each station carries a pill with its
-bikes (classic, then electric after the bolt) or its free docks, in the same colors as the Station
-widget. Under the map, the same stations by distance, with their names.
+classic bikes, its electric bikes (after the bolt) and its free docks (after the P), in the same
+colors as the Station widget. The pills find their own place so as not to hide one another, linked
+to their station by a line. Under the map, the same stations from the nearest on foot, with their
+names and their walking times.
 
 To add it: **Dashboard → Edit → Add a box → Le Vélo map**, then:
 
 | Setting         | Effect                                                                           |
 | --------------- | -------------------------------------------------------------------------------- |
 | Stations        | **My stations** (the ones added, by default) or **Near my home** (search radius) |
-| Show            | **Bikes** (by default) or **Free docks**                                         |
+| Show            | **Everything** (by default), **Bikes** only or **Free docks** only               |
 | "Few left" from | Orange at this number or fewer (2 by default)                                    |
 
 The map is an image: no zoom, no click. It frames itself to show the house and every station (10 at
 most). The background is downloaded once from OpenStreetMap and kept 30 days in the container.
+
+### Walking time
+
+The walking time from the house to each station is computed along the streets by
+[Transitous](https://transitous.org), the free community service the TBM integration also uses. It
+is asked once per station and kept in the container: computed again only when the address of the
+house changes. Until it answers (or when it does not), the time shown is a straight-line estimate,
+preceded by "≈".
 
 ## Scenes
 

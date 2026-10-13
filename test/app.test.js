@@ -10,6 +10,7 @@ import { registerHandlers } from '../src/app.js';
 import { clearStatusCache, setDirectory } from '../src/api/gbfs.js';
 import { clearSuggestions } from '../src/devices/suggestions.js';
 import { clearMaps } from '../src/widgets.js';
+import { clearWalkingCache } from '../src/api/walk.js';
 import { validateWidgetContent, validateWidgetImage } from '@gladysassistant/integration-sdk';
 import { MERIADECK_HOUSE, NOW, stationStatusPayload } from './helpers/fixtures.js';
 import { stubFetch } from './helpers/stubFetch.js';
@@ -21,6 +22,8 @@ beforeEach(async () => {
   clearSuggestions();
   clearStatusCache();
   clearMaps();
+  clearWalkingCache();
+  await rm(join(process.env.VELO_DATA_DIR, 'walking.json'), { force: true });
 });
 
 async function start(t, options = {}) {
@@ -172,6 +175,7 @@ test('the widget shows a created station; a missing choice is explained', async 
   assert.equal(widget.success, true);
   const { components } = widget.data.content;
   assert.equal(components[0].text, 'Meriadeck');
+  assert.equal(components[1].text.fr, '1 min à pied · mis à jour à 11:10.');
   assert.deepEqual(
     components.filter((c) => c.type === 'value').map((c) => c.value),
     [10, 5, 28],
@@ -200,9 +204,10 @@ test('the map widget: my stations, then the stations near the house', async (t) 
   assert.equal(components[0].text.fr, 'Mes stations Le Vélo');
   const image = components.find((c) => c.type === 'image');
   const status = components.find((c) => c.type === 'status');
+  // Everything at once by default, and the walking time from Transitous.
   assert.deepEqual(
-    status.items.map((item) => [item.label, item.value.fr, item.color]),
-    [['Meriadeck · 0 m', '10 musc. · 5 élec.', 'success']],
+    status.items.map((item) => [item.label.fr, item.value.fr, item.color]),
+    [['Meriadeck · 1 min à pied', '10 musc. · 5 élec. · 28 pl.', 'success']],
   );
   const served = await gladys.fake.widgetGetImage(image.key);
   assert.equal(served.success, true);
@@ -214,10 +219,10 @@ test('the map widget: my stations, then the stations near the house', async (t) 
   });
   const rows = near.data.content.components.find((c) => c.type === 'status').items;
   assert.deepEqual(
-    rows.map((item) => [item.label, item.value.fr]),
+    rows.map((item) => [item.label.fr, item.value.fr]),
     [
-      ['Meriadeck · 0 m', '28 places'],
-      ['Saint-Bruno - Hôtel de Région · 466 m', '8 places'],
+      ['Meriadeck · 1 min à pied', '28 places'],
+      ['Saint-Bruno - Hôtel de R… · 7 min à pied', '8 places'],
     ],
   );
   // Other counts, another image.

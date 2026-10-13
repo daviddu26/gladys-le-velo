@@ -34,8 +34,9 @@ const MAX_ZOOM = 17;
 // The markers are drawn this much bigger than their design size: the image
 // is shown about half its width in a dashboard box.
 const MARKER_SCALE = 1.5;
-// Room kept around the markers, so that no pill is cut by the frame.
-const PADDING = { x: 95, top: 85, bottom: 40 };
+// Room kept around the points: the pills find their place around them
+// (placePills), and stay inside the frame.
+const PADDING = { x: 90, top: 60, bottom: 60 };
 
 const TILE_URL = (z, x, y) => `https://tile.openstreetmap.org/${z}/${x}/${y}.png`;
 const TILE_MAX_AGE_MS = 30 * 24 * 3600 * 1000;
@@ -80,7 +81,6 @@ export function fitView(points) {
   }
   const xy = points.map((point) => project(point, zoom));
   const cx = (Math.max(...xy.map((p) => p.x)) + Math.min(...xy.map((p) => p.x))) / 2;
-  // The pills stand above their point: the view is shifted to leave them room.
   const cy =
     (Math.max(...xy.map((p) => p.y)) + Math.min(...xy.map((p) => p.y))) / 2 -
     (PADDING.top - PADDING.bottom) / 2;
@@ -181,11 +181,12 @@ const BIKE =
   '<path d="M3.5 7.5 L7 1.5 H12.5 L14.5 7.5 M7 1.5 L9 7.5 L12.5 1.5 M6 1 H8.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>';
 
 /**
- * The SVG of one station marker: a dot on its position, a pill above it.
- * @param {{ x: number, y: number, color: string,
- *   parts: { icon: 'bike' | 'bolt' | 'dock', text: string }[] }} marker
+ * A pill, drawn from its top-left corner at design size.
+ * @param {{ icon: 'bike' | 'bolt' | 'dock', text: string }[]} parts
+ * @param {string} color
+ * @returns {{ width: number, height: number, svg: string }}
  */
-function stationMarker({ x, y, color, parts }) {
+function pill(parts, color) {
   const gap = 5;
   const iconWidth = { bike: 18, bolt: 9, dock: 10 };
   const inner = parts.reduce(
@@ -194,39 +195,106 @@ function stationMarker({ x, y, color, parts }) {
   );
   const width = Math.round(inner + 16);
   const height = 24;
-  const px = Math.round(x - width / 2);
-  const py = Math.round(y - 14 - height);
-  let cursor = px + 8;
+  const middle = height / 2;
+  let cursor = 8;
   const content = parts
     .map((part, i) => {
       let svg = '';
       if (i) {
         const sx = cursor + (gap + 6) / 2;
-        svg += `<line x1="${sx}" y1="${py + 6}" x2="${sx}" y2="${py + height - 6}" stroke="#fff" stroke-opacity="0.55" stroke-width="1"/>`;
+        svg += `<line x1="${sx}" y1="6" x2="${sx}" y2="${height - 6}" stroke="#fff" stroke-opacity="0.55" stroke-width="1"/>`;
         cursor += gap + 6;
       }
-      const top = py + height / 2;
       if (part.icon === 'bike') {
-        svg += `<g transform="translate(${cursor} ${top - 5.5})">${BIKE}</g>`;
+        svg += `<g transform="translate(${cursor} ${middle - 5.5})">${BIKE}</g>`;
       } else if (part.icon === 'bolt') {
-        svg += `<path transform="translate(${cursor} ${top - 6.5})" d="${BOLT}" fill="#ffd43b"/>`;
+        svg += `<path transform="translate(${cursor} ${middle - 6.5})" d="${BOLT}" fill="#ffd43b"/>`;
       } else {
-        svg += `<text x="${cursor}" y="${top + 5}" font-family="DejaVu Sans" font-weight="bold" font-size="14" fill="#fff">P</text>`;
+        svg += `<text x="${cursor}" y="${middle + 5}" font-family="DejaVu Sans" font-weight="bold" font-size="14" fill="#fff">P</text>`;
       }
       cursor += iconWidth[part.icon] + 3;
-      svg += `<text x="${cursor}" y="${top + 5.3}" font-family="DejaVu Sans" font-weight="bold" font-size="${FONT}" fill="#fff">${escape(part.text)}</text>`;
+      svg += `<text x="${cursor}" y="${middle + 5.3}" font-family="DejaVu Sans" font-weight="bold" font-size="${FONT}" fill="#fff">${escape(part.text)}</text>`;
       cursor += textWidth(part.text);
       return svg;
     })
     .join('');
-  return (
-    `<g transform="translate(${x} ${y}) scale(${MARKER_SCALE}) translate(${-x} ${-y})">` +
-    `<path d="M${x - 6} ${py + height - 1} L${x} ${y - 6} L${x + 6} ${py + height - 1} Z" fill="${color}"/>` +
-    `<rect x="${px}" y="${py}" width="${width}" height="${height}" rx="12" fill="${color}" stroke="#fff" stroke-width="2"/>` +
-    content +
-    `<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="#fff" stroke-width="2"/>` +
-    `</g>`
-  );
+  return {
+    width,
+    height,
+    svg:
+      `<rect x="0" y="0" width="${width}" height="${height}" rx="12" fill="${color}" stroke="#fff" stroke-width="2"/>` +
+      content,
+  };
+}
+
+const overlap = (a, b) =>
+  Math.max(0, Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1)) *
+  Math.max(0, Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1));
+
+/**
+ * Where each pill goes. Close stations would pile their pills up: each one
+ * tries, in turn, above its point, below it, to its right, to its left and
+ * the four corners, and takes the first place that hides no other pill, no
+ * point and not the house, inside the frame; when none is free, the one that
+ * hides the least. The stations are placed in the order given (the nearest
+ * to the house first: the ones that matter most get the best places).
+ * @param {{ x: number, y: number, width: number, height: number }[]} markers final pixels
+ * @param {{ x: number, y: number } | null} house
+ * @returns {{ x: number, y: number }[]} the top-left corner of each pill
+ */
+export function placePills(markers, house) {
+  const gap = 10;
+  const margin = 4;
+  const taken = [];
+  if (house) {
+    const r = 20 * MARKER_SCALE;
+    taken.push({ x1: house.x - r, y1: house.y - r, x2: house.x + r, y2: house.y + r });
+  }
+  for (const m of markers) {
+    taken.push({ x1: m.x - 8, y1: m.y - 8, x2: m.x + 8, y2: m.y + 8 });
+  }
+  return markers.map((m) => {
+    const { x, y, width: w, height: h } = m;
+    const candidates = [
+      [x - w / 2, y - gap - h],
+      [x - w / 2, y + gap],
+      [x + gap, y - h / 2],
+      [x - gap - w, y - h / 2],
+      [x + gap * 0.7, y - gap * 0.7 - h],
+      [x - gap * 0.7 - w, y - gap * 0.7 - h],
+      [x + gap * 0.7, y + gap * 0.7],
+      [x - gap * 0.7 - w, y + gap * 0.7],
+    ].map(([cx, cy]) => {
+      // Inside the frame, whatever the candidate.
+      const left = Math.min(Math.max(cx, margin), WIDTH - margin - w);
+      const top = Math.min(Math.max(cy, margin), HEIGHT - margin - h - 20);
+      return { x1: left, y1: top, x2: left + w, y2: top + h };
+    });
+    // The own point is not an obstacle to its own pill.
+    const others = taken.filter(
+      (rect) => !(rect.x1 === x - 8 && rect.y1 === y - 8 && rect.x2 === x + 8),
+    );
+    let best = candidates[0];
+    let bestCost = Infinity;
+    for (const rect of candidates) {
+      const cost = others.reduce((sum, other) => sum + overlap(rect, other), 0);
+      if (cost < bestCost) {
+        best = rect;
+        bestCost = cost;
+      }
+      if (cost === 0) break;
+    }
+    taken.push(best);
+    return { x: Math.round(best.x1), y: Math.round(best.y1) };
+  });
+}
+
+/** The point of a rectangle closest to (x, y), for the line to the pill. */
+function nearestPoint(rect, x, y) {
+  return {
+    x: Math.min(Math.max(x, rect.x), rect.x + rect.width),
+    y: Math.min(Math.max(y, rect.y), rect.y + rect.height),
+  };
 }
 
 /** The house: a burgundy disc with a white house in it. */
@@ -256,12 +324,34 @@ export async function renderMap({ house, stations }) {
   };
   const tiles = await background(view);
 
-  // From north to south: a pill overlaps the station above it, never its own.
-  const markers = stations
-    .map((station) => ({ ...station, ...at(station) }))
-    .sort((a, b) => a.y - b.y)
-    .map((station) =>
-      stationMarker({ ...station, color: MARKER_COLORS[station.color] ?? MARKER_COLORS.neutral }),
+  const marks = stations.map((station) => {
+    const color = MARKER_COLORS[station.color] ?? MARKER_COLORS.neutral;
+    const drawn = pill(station.parts, color);
+    return {
+      ...at(station),
+      color,
+      drawn,
+      width: drawn.width * MARKER_SCALE,
+      height: drawn.height * MARKER_SCALE,
+    };
+  });
+  const houseAt = house ? at(house) : null;
+  const places = placePills(marks, houseAt);
+  // The lines and the dots first, the pills over them.
+  const links = marks
+    .map((point, i) => {
+      const box = { ...places[i], width: point.width, height: point.height };
+      const end = nearestPoint(box, point.x, point.y);
+      return (
+        `<line x1="${point.x}" y1="${point.y}" x2="${end.x}" y2="${end.y}" stroke="${point.color}" stroke-width="3"/>` +
+        `<circle cx="${point.x}" cy="${point.y}" r="7" fill="${point.color}" stroke="#fff" stroke-width="3"/>`
+      );
+    })
+    .join('');
+  const pills = marks
+    .map(
+      (point, i) =>
+        `<g transform="translate(${places[i].x} ${places[i].y}) scale(${MARKER_SCALE})">${point.drawn.svg}</g>`,
     )
     .join('');
   const attribution = tiles
@@ -270,9 +360,10 @@ export async function renderMap({ house, stations }) {
     : '';
   const overlay = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}">` +
-      markers +
-      // The house last: no pill ever hides it.
-      (house ? houseMarker(at(house)) : '') +
+      links +
+      // The house before the pills, which never stand on it.
+      (houseAt ? houseMarker(houseAt) : '') +
+      pills +
       attribution +
       `</svg>`,
   );

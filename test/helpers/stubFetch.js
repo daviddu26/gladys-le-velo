@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------------
 
 import sharp from 'sharp';
+import { distanceMeters } from '../../src/api/gbfs.js';
 import {
   stationInformationPayload,
   stationStatusPayload,
@@ -24,7 +25,9 @@ export const TILE_PNG = await sharp({
  * @param {Record<string, unknown | ((url: URL) => unknown)>} [overrides]
  *   per feed ('station_status'...): a payload, a function of the URL, an
  *   Error to throw, or `{ status }` for an HTTP error; 'tile' for the
- *   OpenStreetMap tiles (a Buffer, an Error or `{ status }`)
+ *   OpenStreetMap tiles (a Buffer, an Error or `{ status }`); 'one-to-many'
+ *   for the Transitous walking times (a payload, a function of the URL, an
+ *   Error or `{ status }`)
  * @returns {{ calls: URL[] }}
  */
 export function stubFetch(t, overrides = {}) {
@@ -32,6 +35,18 @@ export function stubFetch(t, overrides = {}) {
     station_information: stationInformationPayload,
     vehicle_types: vehicleTypesPayload,
     tile: TILE_PNG,
+    // Transitous: the straight line lengthened by 20 %, at 80 m a minute.
+    'one-to-many': (url) => {
+      const from = url.searchParams.get('one').split(';').map(Number);
+      return url.searchParams
+        .get('many')
+        .split(',')
+        .map((place) => {
+          const [lat, lon] = place.split(';').map(Number);
+          const meters = distanceMeters({ lat: from[0], lon: from[1] }, { lat, lon });
+          return { duration: Math.round(((meters * 1.2) / 80) * 60) };
+        });
+    },
     station_status: () => stationStatusPayload(),
     ...overrides,
   };

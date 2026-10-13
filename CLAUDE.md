@@ -45,7 +45,8 @@ src/devices/index.js              registry: configured + suggested + created dev
 src/devices/station.js            the device type: a station, its six features
 src/devices/suggestions.js        the stations near the house, and the house location
 src/widgets.js                    dashboard widgets "station" and "map", map images by key
-src/map.js                        map rendering: OSM tiles (cached in /data/tiles), markers, sharp
+src/map.js                        map rendering: OSM tiles (cached in /data/tiles), markers, pill placement
+src/api/walk.js                   walking times from the house (Transitous one-to-many, cached)
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
 docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
@@ -90,6 +91,19 @@ test/helpers/fixtures.js          GBFS answers shaped like the real ones (2026-1
 - The text is drawn by sharp through fontconfig: the Dockerfile installs
   `font-dejavu fontconfig`, and the CI draws a text in the built image to
   catch a missing font (the pills would come out empty, silently).
+
+## Walking times (Transitous)
+
+- `src/api/walk.js`: MOTIS `GET /api/v1/one-to-many` at
+  `https://api.transitous.org/api` (`one=lat;lon`, `many=lat;lon,…`,
+  `mode=WALK`, `max`, `maxMatchingDistance`, `arriveBy=false`), one
+  `{ duration }` in seconds per target, `{}` when no path (OpenAPI checked
+  2026-10-14). Asked once per station, kept in `/data/walking.json` keyed by
+  the house position; a failure is retried after 10 minutes, the estimate
+  (straight line × 1.3 at 80 m/min, "≈") shown meanwhile.
+- Transitous policy: light use, User-Agent with a contact — the same service
+  and team as the TBM integration. api.transitous.org is out of reach of the
+  development sandbox: the stub answers from the straight-line distance.
 
 ## Rules
 

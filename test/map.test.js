@@ -4,7 +4,7 @@ import { readdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import sharp from 'sharp';
 import { validateWidgetImage } from '@gladysassistant/integration-sdk';
-import { fitView, HEIGHT, project, renderMap, WIDTH } from '../src/map.js';
+import { fitView, HEIGHT, placePills, project, renderMap, WIDTH } from '../src/map.js';
 import './helpers/fixtures.js';
 import { stubFetch } from './helpers/stubFetch.js';
 
@@ -72,4 +72,33 @@ test('without tiles, the map is still drawn, on a plain background', async (t) =
   stubFetch(t, { tile: { status: 403 } });
   const image = await renderMap({ house: null, stations: STATIONS });
   assert.deepEqual(validateWidgetImage(image.toString('base64')), []);
+});
+
+test('close stations: no pill hides another, a point or the house', () => {
+  const house = { x: 400, y: 260 };
+  const markers = [
+    { x: 520, y: 320 },
+    { x: 470, y: 300 },
+    { x: 430, y: 330 },
+    { x: 380, y: 300 },
+    { x: 400, y: 220 },
+  ].map((point) => ({ ...point, width: 200, height: 36 }));
+  const places = placePills(markers, house);
+  const boxes = places.map((p, i) => ({
+    x1: p.x,
+    y1: p.y,
+    x2: p.x + markers[i].width,
+    y2: p.y + markers[i].height,
+  }));
+  const hits = (a, b) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
+  for (const [i, a] of boxes.entries()) {
+    assert.ok(a.x1 >= 0 && a.x2 <= WIDTH && a.y1 >= 0 && a.y2 <= HEIGHT, `pill ${i} in the frame`);
+    for (const b of boxes.slice(i + 1)) assert.ok(!hits(a, b), `pill ${i} hides another`);
+    const r = 30;
+    assert.ok(!hits(a, { x1: house.x - r, y1: house.y - r, x2: house.x + r, y2: house.y + r }));
+    // Its own point is linked to it: only the others count.
+    for (const m of markers.filter((_, k) => k !== i)) {
+      assert.ok(!hits(a, { x1: m.x - 8, y1: m.y - 8, x2: m.x + 8, y2: m.y + 8 }), `pill ${i}`);
+    }
+  }
 });

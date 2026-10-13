@@ -34,6 +34,7 @@ test('a station in service: three tiles, the time of the report', () => {
   const [heading, caption, ...tiles] = content.components;
   assert.equal(heading.text, 'Meriadeck');
   assert.equal(caption.text.fr, 'Mis à jour à 11:10.');
+  assert.equal(caption.text.en, 'Updated at 11:10.');
   assert.deepEqual(
     tiles.map((tile) => [tile.label.fr, tile.value, tile.color]),
     [
@@ -51,6 +52,20 @@ test('few electric bikes left: orange; none: red', () => {
     tiles.map((tile) => tile.color),
     ['danger', 'warning', 'success'],
   );
+});
+
+test('the walking time leads the caption, "≈" for an estimate', () => {
+  const exact = stationContent({ name: 'Meriadeck' }, status['1'], {
+    featureIds,
+    walk: { minutes: 6, exact: true },
+  });
+  assert.equal(exact.components[1].text.fr, '6 min à pied · mis à jour à 11:10.');
+  assert.equal(exact.components[1].text.en, '6 min walk · updated at 11:10.');
+  const guess = stationContent({ name: 'Piscine Judaique' }, status['3'], {
+    featureIds,
+    walk: { minutes: 9, exact: false },
+  });
+  assert.equal(guess.components[1].text.fr, '≈ 9 min à pied · Location suspendue.');
 });
 
 test('a station that does not rent says so, its bikes in grey', () => {

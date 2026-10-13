@@ -323,8 +323,8 @@
         "fr": "Carte Le Vélo"
       },
       "description": {
-        "en": "The house and the stations on a map, with their bikes or their free docks.",
-        "fr": "La maison et les stations sur une carte, avec leurs vélos ou leurs places libres."
+        "en": "The house and the stations on a map, with their classic bikes, electric bikes and free docks.",
+        "fr": "La maison et les stations sur une carte, avec leurs vélos musculaires, électriques et places libres."
       },
       "icon": "map",
       "settings": [
@@ -364,10 +364,17 @@
             "fr": "Afficher"
           },
           "description": {
-            "en": "What each station shows on the map. Empty: the bikes.",
-            "fr": "Ce que chaque station affiche sur la carte. Vide : les vélos."
+            "en": "What each station shows on the map. Empty: everything.",
+            "fr": "Ce que chaque station affiche sur la carte. Vide : tout."
           },
           "options": [
+            {
+              "value": "all",
+              "label": {
+                "en": "Everything: bikes and free docks",
+                "fr": "Tout : vélos et places libres"
+              }
+            },
             {
               "value": "bikes",
               "label": {

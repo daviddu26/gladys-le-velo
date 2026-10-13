@@ -7,16 +7,16 @@
 // integration composes itself, for one station:
 //   - three tiles: classic bikes, electric bikes, free docks, each green,
 //     orange when few are left (the threshold of the settings), red at zero;
-//   - a caption: the state when the station is not fully in service, else the
-//     time of the last report;
+//   - a caption: how many minutes away on foot, then the state when the
+//     station is not fully in service, else the time of the last report;
 //   - optionally, the history of the bikes and of the free docks (a chart
 //     bound to the features, drawn by Gladys from the history it keeps): when
 //     the station empties, and when it is full.
 //
 // Dashboard widget "map": the house and the stations on an OpenStreetMap
-// background (src/map.js), each station a pill with its bikes (classic and
-// electric) or its free docks, colored like the tiles above; under the map,
-// the same stations by distance, with their names.
+// background (src/map.js), each station a pill with its classic bikes, its
+// electric bikes and its free docks (or some of them), colored like the tiles
+// above; under the map, the same stations by walking time, with their names.
 //
 // Nothing here throws at the dashboard: a device removed, or the API down,
 // renders as a card saying so — an empty or failed widget tells nothing.
@@ -33,8 +33,9 @@ import {
 import { createHash } from 'node:crypto';
 import { createdStations, DeviceSelectionError, findSelectedBlueprint } from './devices/index.js';
 import { homeLocation } from './devices/suggestions.js';
-import { distanceMeters, fetchStatus, getDirectory, stationsNear } from './api/gbfs.js';
+import { fetchStatus, getDirectory, stationsNear } from './api/gbfs.js';
 import { renderMap } from './map.js';
+import { formatWalk, walkingTimes } from './api/walk.js';
 import { FEATURES, stateOf, stateLabel, DEVICE_TYPE } from './devices/station.js';
 import { VeloApiError } from './api/http.js';
 
@@ -109,7 +110,7 @@ const LABELS = {
     electric: 'Électriques',
     docks: 'Places libres',
     history: 'Vélos et places libres',
-    reported: (time) => `Mis à jour à ${time}.`,
+    reported: (time) => `mis à jour à ${time}`,
   },
   en: {
     bikes: 'Bikes',
@@ -117,7 +118,7 @@ const LABELS = {
     electric: 'Electric',
     docks: 'Free docks',
     history: 'Bikes and free docks',
-    reported: (time) => `Updated at ${time}.`,
+    reported: (time) => `updated at ${time}`,
   },
 };
 
@@ -126,32 +127,40 @@ const LABELS = {
  * @param {{ name: string }} info
  * @param {object | undefined} status one station of parseStatus
  * @param {{ threshold?: number, history?: string | null,
- *   featureIds?: { mechanical: string, electric: string, docks: string } }} [options]
- *   `featureIds`: the external ids of the three counters, for the chart
+ *   featureIds?: { mechanical: string, electric: string, docks: string },
+ *   walk?: { minutes: number, exact: boolean } | null }} [options]
+ *   `featureIds`: the external ids of the three counters, for the chart;
+ *   `walk`: the walking time from the house (none without a located house)
  */
 export function stationContent(
   info,
   status,
-  { threshold = DEFAULT_THRESHOLD, history = null, featureIds } = {},
+  { threshold = DEFAULT_THRESHOLD, history = null, featureIds, walk = null } = {},
 ) {
   const components = [
     { type: 'text', variant: WIDGET_TEXT_VARIANTS.HEADING, text: truncate(info.name, 40) },
   ];
   const state = stateOf(status);
 
-  // The caption: what is wrong first; when all is well, how fresh it is.
-  if (state !== 'ok') {
+  // The caption: how far on foot, then what is wrong; when all is well, how
+  // fresh it is. "6 min à pied · Location suspendue."
+  const notes = { en: [], fr: [] };
+  for (const language of ['en', 'fr']) {
+    if (walk) notes[language].push(formatWalk(walk, language));
+    if (state !== 'ok') notes[language].push(stateLabel(state, language));
+    else if (status.reportedAt) {
+      notes[language].push(LABELS[language].reported(clock.format(new Date(status.reportedAt))));
+    }
+  }
+  if (notes.fr.length > 0) {
+    const sentence = (parts) => {
+      const text = parts.join(' · ');
+      return `${text.charAt(0).toUpperCase()}${text.slice(1)}.`;
+    };
     components.push({
       type: 'text',
       variant: WIDGET_TEXT_VARIANTS.CAPTION,
-      text: { en: `${stateLabel(state, 'en')}.`, fr: `${stateLabel(state, 'fr')}.` },
-    });
-  } else if (status.reportedAt) {
-    const time = clock.format(new Date(status.reportedAt));
-    components.push({
-      type: 'text',
-      variant: WIDGET_TEXT_VARIANTS.CAPTION,
-      text: { en: LABELS.en.reported(time), fr: LABELS.fr.reported(time) },
+      text: { en: truncate(sentence(notes.en), 80), fr: truncate(sentence(notes.fr), 80) },
     });
   }
 
@@ -215,9 +224,9 @@ export function selectedScope(value) {
   return value === 'nearby' ? 'nearby' : 'followed';
 }
 
-/** What the pills count: the bikes (default) or the free docks. */
+/** What the pills count: everything (default), the bikes, or the free docks. */
 export function selectedShow(value) {
-  return value === 'docks' ? 'docks' : 'bikes';
+  return value === 'docks' || value === 'bikes' ? value : 'all';
 }
 
 const MAP_LABELS = {
@@ -228,6 +237,10 @@ const MAP_LABELS = {
     bikes: (s) =>
       s.mechanical === null ? `${s.bikes} vélos` : `${s.mechanical} musc. · ${s.electric} élec.`,
     docks: (s) => `${s.docks} ${s.docks > 1 ? 'places' : 'place'}`,
+    all: (s) =>
+      s.mechanical === null
+        ? `${s.bikes} vélos · ${s.docks} pl.`
+        : `${s.mechanical} musc. · ${s.electric} élec. · ${s.docks} pl.`,
     unknown: 'inconnue du service',
   },
   en: {
@@ -239,6 +252,10 @@ const MAP_LABELS = {
         ? `${s.bikes} bikes`
         : `${s.mechanical} classic · ${s.electric} electric`,
     docks: (s) => `${s.docks} ${s.docks === 1 ? 'dock' : 'docks'}`,
+    all: (s) =>
+      s.mechanical === null
+        ? `${s.bikes} bikes · ${s.docks} docks`
+        : `${s.mechanical} classic · ${s.electric} elec. · ${s.docks} docks`,
     unknown: 'unknown to the service',
   },
 };
@@ -246,7 +263,7 @@ const MAP_LABELS = {
 /**
  * One station on the map: where, which color, what its pill says.
  * @param {object | undefined} status one station of parseStatus
- * @param {'bikes' | 'docks'} show
+ * @param {'all' | 'bikes' | 'docks'} show
  * @param {number} threshold
  */
 export function mapMarker(status, show, threshold) {
@@ -257,15 +274,18 @@ export function mapMarker(status, show, threshold) {
       parts: [{ icon: 'dock', text: String(status.docks) }],
     };
   }
+  const bikes =
+    status.mechanical === null
+      ? [{ icon: 'bike', text: String(status.bikes) }]
+      : [
+          { icon: 'bike', text: String(status.mechanical) },
+          { icon: 'bolt', text: String(status.electric) },
+        ];
   return {
+    // Everything shown: the color still speaks of the bikes, what one comes
+    // to a station for first.
     color: countColor(status.bikes, threshold, status.renting),
-    parts:
-      status.mechanical === null
-        ? [{ icon: 'bike', text: String(status.bikes) }]
-        : [
-            { icon: 'bike', text: String(status.mechanical) },
-            { icon: 'bolt', text: String(status.electric) },
-          ],
+    parts: show === 'all' ? [...bikes, { icon: 'dock', text: String(status.docks) }] : bikes,
   };
 }
 
@@ -300,8 +320,9 @@ export async function mapImage(key) {
 /**
  * The card of the map widget.
  * @param {{ scope: "followed" | "nearby", house: object | null,
- *   stations: { name: string, lat: number, lon: number, distance: number | null,
- *     status: object | undefined }[], show: 'bikes' | 'docks', threshold: number }} view
+ *   stations: { name: string, lat: number, lon: number,
+ *     walk: { minutes: number, exact: boolean } | null, status: object | undefined }[],
+ *   show: 'all' | 'bikes' | 'docks', threshold: number }} view
  */
 export function mapContent({ scope, house, stations, show, threshold }) {
   const markers = stations.map((station) => ({
@@ -339,11 +360,14 @@ export function mapContent({ scope, house, stations, show, threshold }) {
   components.push({
     type: 'status',
     items: stations.map((station, i) => {
-      const where = station.distance === null ? '' : ` · ${station.distance} m`;
       const text = (language) =>
         station.status ? MAP_LABELS[language][show](station.status) : MAP_LABELS[language].unknown;
+      const label = (language) => {
+        const where = station.walk ? ` · ${formatWalk(station.walk, language)}` : '';
+        return `${truncate(station.name, 40 - where.length)}${where}`;
+      };
       return {
-        label: `${truncate(station.name, 40 - where.length)}${where}`,
+        label: { en: label('en'), fr: label('fr') },
         value: { en: truncate(text('en'), 40), fr: truncate(text('fr'), 40) },
         color: markers[i].color,
       };
@@ -353,7 +377,7 @@ export function mapContent({ scope, house, stations, show, threshold }) {
 }
 
 /**
- * The stations of the map widget, closest to the house first.
+ * The stations of the map widget, the nearest on foot first.
  * @returns {Promise<{ house: object | null, stations: object[] } | { message: object }>}
  */
 export async function mapStations(gladys, config, scope) {
@@ -396,18 +420,23 @@ export async function mapStations(gladys, config, scope) {
             },
     };
   }
-  const stations = ids.map((id) => {
-    const station = dir.stations[id];
-    return {
-      id,
-      name: station.name,
-      lat: station.lat,
-      lon: station.lon,
-      distance: house ? distanceMeters(house, station) : null,
-    };
+  // The closest by straight line first: the walking times are only asked for
+  // the stations shown.
+  let stations = ids.map((id) => {
+    const { name, lat, lon } = dir.stations[id];
+    return { id, name, lat, lon, walk: null };
   });
-  if (house) stations.sort((a, b) => a.distance - b.distance);
-  return { house, stations: stations.slice(0, MAP_MAX_STATIONS) };
+  if (house) {
+    const away = (station) => (station.lat - house.lat) ** 2 + (station.lon - house.lon) ** 2;
+    stations.sort((a, b) => away(a) - away(b));
+  }
+  stations = stations.slice(0, MAP_MAX_STATIONS);
+  if (house) {
+    const walks = await walkingTimes(house, stations);
+    for (const station of stations) station.walk = walks[station.id];
+    stations.sort((a, b) => a.walk.minutes - b.walk.minutes);
+  }
+  return { house, stations };
 }
 
 export const WIDGETS = {
@@ -446,7 +475,11 @@ export const WIDGETS = {
       try {
         const status = await blueprint.read();
         const ids = gladys.externalIds(DEVICE_TYPE, blueprint.station);
+        const station = getDirectory()?.stations?.[blueprint.station];
+        const house = station ? await homeLocation(gladys) : null;
+        const walk = house ? (await walkingTimes(house, [station]))[station.id] : null;
         return stationContent(blueprint.describe(), status, {
+          walk,
           threshold: selectedThreshold(settings?.threshold),
           history: selectedHistory(settings?.history),
           featureIds: {

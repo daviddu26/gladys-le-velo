@@ -10,6 +10,20 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Added
+
+- The widgets show how many minutes away on foot each station is from the
+  house, computed along the streets by Transitous once per station and kept
+  (an estimate, "≈ 6 min", until it answers).
+- The map widget can show everything at once — classic bikes, electric bikes
+  and free docks — and does so by default ("Show" setting).
+
+### Changed
+
+- On the map, the pills find their own place around their station so that
+  none hides another or the house, linked to their station by a line. The
+  list under the map is sorted by walking time.
+
 ## [1.0.0] - 2026-10-13
 
 ### Added
