@@ -10,7 +10,18 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Changed
+
+- The stations are refreshed every 30 seconds instead of every minute (the
+  setting now goes down to 30 s). The stations added before take it after
+  “Update” in the Discover tab.
+
 ## [0.3.0] - 2026-10-13
+
+### Changed
+
+- The chart of the "Le Vélo station" widget draws the free docks too, next to
+  the classic and the electric bikes.
 
 ## [0.2.0] - 2026-10-13
 
@@ -19,8 +30,7 @@ the notes of the version's GitHub Release.
 - A "Le Vélo station" dashboard widget: the classic bikes, the electric bikes
   and the free docks of a station, green, orange when few are left (threshold
   of your choice), red when none, with the state of the station and, if asked,
-  a chart of the classic bikes, the electric bikes and the free docks over
-  the last 12 hours, day or week.
+  a chart of the bikes over the last 12 hours, day or week.
 
 ### Changed
 

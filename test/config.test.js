@@ -16,7 +16,7 @@ test('numbers are read from strings and kept within bounds', () => {
   });
   assert.equal(config.nearby_stations, 10);
   assert.equal(config.nearby_radius, 100);
-  assert.equal(config.poll_frequency, 60);
+  assert.equal(config.poll_frequency, 30);
 });
 
 test('station ids: commas, semicolons, spaces; duplicates and garbage', () => {

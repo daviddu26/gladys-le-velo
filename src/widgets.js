@@ -33,8 +33,8 @@ const logger = createLogger({ name: 'widgets' });
 /** Widget key, as declared in the manifest. Forever. */
 export const STATION_WIDGET = 'station';
 
-// The status feed moves every minute; the core re-pulls the card at this pace.
-const TTL_SECONDS = 60;
+// The core re-pulls the card at the pace of the shortest poll interval.
+const TTL_SECONDS = 30;
 
 const { NEUTRAL, SUCCESS, WARNING, DANGER } = WIDGET_COLORS;
 

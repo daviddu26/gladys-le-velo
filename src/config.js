@@ -16,8 +16,9 @@ export const DEFAULT_CONFIG = {
   nearby_radius: 500,
   // Stations typed by hand, by id: "1, 12".
   stations: '',
-  // Seconds between two reads. The feed is refreshed every minute or so.
-  poll_frequency: 60,
+  // Seconds between two reads. The feed says its data holds 60 s: reading
+  // every 30 s halves the delay our side adds, at one small request.
+  poll_frequency: 30,
   language: 'fr',
 };
 
@@ -25,7 +26,7 @@ export const DEFAULT_CONFIG = {
 const BOUNDS = {
   nearby_stations: [0, 10],
   nearby_radius: [100, 3000],
-  poll_frequency: [60, 900],
+  poll_frequency: [30, 900],
 };
 
 function clampNumber(key, value) {

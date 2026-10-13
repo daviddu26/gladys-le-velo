@@ -6,7 +6,7 @@ External integration for [Gladys Assistant](https://gladysassistant.com) that br
 TBM** (formerly V³ / VCub), the bike-share service of Bordeaux Métropole, into your smart home:
 
 - **bikes available per station, classic and electric counted apart**, the free docks, the state
-  of the station and a ready-made summary, refreshed every minute;
+  of the station and a ready-made summary, refreshed every 30 seconds;
 - **the stations near your home proposed by themselves** in the Discover tab, from the address of
   the house in Gladys;
 - any other station added by its number, found with the **Find a station** button.

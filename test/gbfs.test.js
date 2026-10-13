@@ -183,10 +183,11 @@ test('the status is read once for every station of a poll tick', async (t) => {
   const { calls } = stubFetch(t);
   const [a, b] = await Promise.all([fetchStatus({ now: NOW }), fetchStatus({ now: NOW })]);
   assert.equal(a, b);
-  await fetchStatus({ now: NOW + 20_000 });
+  await fetchStatus({ now: NOW + 10_000 });
   assert.equal(calls.length, 1);
-  await fetchStatus({ now: NOW + 40_000 });
+  // The next tick, 30 s later, reads afresh.
+  await fetchStatus({ now: NOW + 30_000 });
   assert.equal(calls.length, 2);
-  await fetchStatus({ now: NOW + 41_000, fresh: true });
+  await fetchStatus({ now: NOW + 31_000, fresh: true });
   assert.equal(calls.length, 3);
 });

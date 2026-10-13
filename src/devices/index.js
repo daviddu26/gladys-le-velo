@@ -126,9 +126,10 @@ export function findSelectedBlueprint(gladys, deviceExternalId, config, type = D
   return blueprint;
 }
 
-// Gladys' poll ticks drift by a few milliseconds: a read due within the next
-// half-minute runs now, so a 120 s interval does not slip to 180 s.
-const POLL_TOLERANCE_MS = DEVICE_POLL_FREQUENCIES.EVERY_MINUTES / 2;
+// Gladys ticks every 30 s and its ticks drift by a few milliseconds: a read
+// due within the next half-tick runs now, so a 60 s interval does not slip to
+// 90 s.
+const POLL_TOLERANCE_MS = DEVICE_POLL_FREQUENCIES.EVERY_30_SECONDS / 2;
 
 /**
  * The `onPoll` dispatcher: route the poll to the blueprint owning the device,

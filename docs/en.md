@@ -65,7 +65,7 @@ to stop, delete the device in Gladys.
 | Stations near my home | 3       | How many stations to propose (0 turns it off)       |
 | Search radius (m)     | 500     | Largest distance from the house                     |
 | Stations              | (empty) | Numbers of additional stations                      |
-| Refresh interval (s)  | 60      | How often the stations are read, one minute minimum |
+| Refresh interval (s)  | 30      | How often the stations are read, 30 seconds minimum |
 | Language of values    | French  | Language of the feature names and of the texts      |
 
 ## Dashboard
@@ -118,4 +118,4 @@ Station availability: Bordeaux Métropole, data set
 [Station Le Vélo en temps réel](https://transport.data.gouv.fr/datasets/station-le-velo-en-temps-reel-1)
 in the GBFS format, under the [Licence Ouverte](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).
 The list of stations is read once a day and kept in the container; the availability of the whole
-network is read in a single request per minute, however many stations are followed.
+network is read in a single request every 30 seconds, however many stations are followed.

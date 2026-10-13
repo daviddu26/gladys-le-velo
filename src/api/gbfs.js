@@ -346,10 +346,11 @@ export function stationsNear(dir, point, radius) {
 // Status: the whole network, shared by every device.
 // ----------------------------------------------------------------------------
 
-// The feed says ttl 60 s. Every device of a poll tick asks within the same
-// seconds: a read younger than half a minute serves them all. How often a
-// device is refreshed is the poller's business (src/devices/index.js).
-const STATUS_MAX_AGE_MS = 30_000;
+// Every device of a poll tick asks within the same seconds: a read younger
+// than this serves them all. It stays under the shortest interval (30 s), so
+// each tick reads afresh; how often a device is refreshed is the poller's
+// business (src/devices/index.js).
+const STATUS_MAX_AGE_MS = 15_000;
 
 /** @type {{ readAt: number, stations: Record<string, object> } | null} */
 let status = null;

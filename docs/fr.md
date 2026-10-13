@@ -69,7 +69,7 @@ l'arrêter, supprimez l'appareil dans Gladys.
 | Stations près de chez moi | 3          | Combien de stations proposer (0 désactive la proposition) |
 | Rayon de recherche (m)    | 500        | Distance maximale de la maison                            |
 | Stations                  | (vide)     | Numéros de stations supplémentaires                       |
-| Rafraîchissement (s)      | 60         | Fréquence de lecture, une minute minimum                  |
+| Rafraîchissement (s)      | 30         | Fréquence de lecture, 30 secondes minimum                 |
 | Langue des valeurs        | Français   | Langue des noms de fonctionnalités et des textes          |
 
 ## Tableau de bord
@@ -123,5 +123,5 @@ Disponibilité des stations : Bordeaux Métropole, jeu
 [Station Le Vélo en temps réel](https://transport.data.gouv.fr/datasets/station-le-velo-en-temps-reel-1)
 au format GBFS, sous [Licence Ouverte](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).
 La liste des stations est relue une fois par jour et gardée dans le conteneur ; la disponibilité
-de tout le réseau est lue en une seule requête par minute, quel que soit le nombre de stations
+de tout le réseau est lue en une seule requête toutes les 30 secondes, quel que soit le nombre de stations
 suivies.

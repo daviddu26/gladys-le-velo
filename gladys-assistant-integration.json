@@ -135,12 +135,12 @@
         "fr": "Rafraîchissement (s)"
       },
       "description": {
-        "en": "How often the stations are read, in seconds (one minute minimum).",
-        "fr": "Fréquence de lecture des stations, en secondes (une minute minimum)."
+        "en": "How often the stations are read, in seconds (30 seconds minimum). The operator refreshes its data about every minute: reading more often brings nothing.",
+        "fr": "Fréquence de lecture des stations, en secondes (30 secondes minimum). L’opérateur rafraîchit ses données environ chaque minute : lire plus souvent n’apporte rien."
       },
       "required": false,
-      "default": 60,
-      "min": 60,
+      "default": 30,
+      "min": 30,
       "max": 900
     },
     {

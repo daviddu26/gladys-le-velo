@@ -94,6 +94,27 @@ test('the poll follows the configured interval and reads the network once', asyn
   assert.equal(statusReads(), 2);
 });
 
+test('by default a station is read at every 30 s tick; at 60 s, one tick in two', async (t) => {
+  const { gladys, fetches } = await start(t);
+  const [meriadeck] = gladys.fake.discoveredDevices;
+  assert.equal(meriadeck.poll_frequency, 30_000);
+  await gladys.fake.deviceCreated(meriadeck);
+  const statusReads = () =>
+    fetches.calls.filter((url) => url.pathname.endsWith('station_status.json')).length;
+  assert.equal(statusReads(), 1);
+  t.mock.timers.setTime(NOW + 30_000);
+  await gladys.fake.poll(meriadeck);
+  assert.equal(statusReads(), 2);
+
+  await gladys.fake.configUpdated({ nearby_stations: 2, poll_frequency: 60 });
+  t.mock.timers.setTime(NOW + 60_000);
+  await gladys.fake.poll(meriadeck);
+  assert.equal(statusReads(), 2);
+  t.mock.timers.setTime(NOW + 90_000);
+  await gladys.fake.poll(meriadeck);
+  assert.equal(statusReads(), 3);
+});
+
 test('a station that empties is published', async (t) => {
   let empty = false;
   const { gladys } = await start(t, {

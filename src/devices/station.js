@@ -199,7 +199,7 @@ export function createStationBlueprint(entry) {
         // of its own frequencies: the configured interval is applied by the
         // poll dispatcher (src/devices/index.js), not here.
         should_poll: true,
-        poll_frequency: DEVICE_POLL_FREQUENCIES.EVERY_MINUTES,
+        poll_frequency: DEVICE_POLL_FREQUENCIES.EVERY_30_SECONDS,
         params: [{ name: 'station', value: entry.station }],
         features: [
           counter(FEATURES.mechanical),
