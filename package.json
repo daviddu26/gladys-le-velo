@@ -1,6 +1,6 @@
 {
   "name": "gladys-le-velo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Gladys Assistant external integration for Le Vélo par TBM (Bordeaux bike share): bikes and free docks per station, classic and electric counted apart.",
   "type": "module",
