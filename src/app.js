@@ -17,6 +17,7 @@ import {
   createPoller,
 } from './devices/index.js';
 import { getSuggestions, refreshSuggestions } from './devices/suggestions.js';
+import { WIDGETS, refreshWidgets } from './widgets.js';
 
 const logger = createLogger({ name: 'app' });
 
@@ -99,6 +100,7 @@ export function registerHandlers(gladys) {
     await refreshSuggestions(gladys, config);
     await gladys.publishDiscoveredDevices(buildDiscoveredDevices(gladys, config));
     await gladys.setConnectionStatus(...connectionStatus(directoryAvailable, config));
+    refreshWidgets(gladys);
   }
 
   function stop() {
@@ -131,6 +133,11 @@ export function registerHandlers(gladys) {
   // Buttons of the Configuration screen.
   for (const [key, handler] of Object.entries(ACTIONS)) {
     gladys.onAction(key, (fields) => handler(gladys, { fields, config }));
+  }
+
+  // Dashboard widgets.
+  for (const [key, widget] of Object.entries(WIDGETS)) {
+    gladys.onWidgetGet(key, (request) => widget.get(gladys, { ...request, config }));
   }
 
   // Configuration updated by the user.

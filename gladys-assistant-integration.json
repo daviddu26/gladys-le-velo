@@ -17,7 +17,10 @@
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Get started in 2 minutes", "fr": "Démarrer en 2 minutes" },
+      "label": {
+        "en": "Get started in 2 minutes",
+        "fr": "Démarrer en 2 minutes"
+      },
       "description": {
         "en": "1. Check that your house has an address in Gladys (Settings → Houses). 2. Save this page. 3. Open the “Discover” tab of this integration and press “Add” on the stations near your home. That's it: the bikes available arrive within a minute. No account, no key: Le Vélo real time is open data.",
         "fr": "1. Vérifiez que votre maison a une adresse dans Gladys (Paramètres → Maisons). 2. Enregistrez cette page. 3. Ouvrez l’onglet « Découverte » de cette intégration et cliquez sur « Ajouter » sur les stations près de chez vous. C’est tout : les vélos disponibles arrivent dans la minute. Pas de compte, pas de clé : le temps réel Le Vélo est en données ouvertes."
@@ -25,18 +28,27 @@
       "links": [
         {
           "url": "https://github.com/daviddu26/gladys-le-velo/blob/main/docs/fr.md",
-          "label": { "en": "Step-by-step guide", "fr": "Guide pas à pas" }
+          "label": {
+            "en": "Step-by-step guide",
+            "fr": "Guide pas à pas"
+          }
         },
         {
           "url": "https://transport.data.gouv.fr/datasets/station-le-velo-en-temps-reel-1",
-          "label": { "en": "Le Vélo open data", "fr": "Données ouvertes Le Vélo" }
+          "label": {
+            "en": "Le Vélo open data",
+            "fr": "Données ouvertes Le Vélo"
+          }
         }
       ]
     },
     {
       "key": "nearby",
       "type": "section",
-      "label": { "en": "Near my home", "fr": "Près de chez moi" },
+      "label": {
+        "en": "Near my home",
+        "fr": "Près de chez moi"
+      },
       "description": {
         "en": "The closest stations are proposed in the “Discover” tab, one device per station.",
         "fr": "Les stations les plus proches sont proposées dans l’onglet « Découverte », un appareil par station."
@@ -45,7 +57,10 @@
     {
       "key": "nearby_stations",
       "type": "number",
-      "label": { "en": "Stations near my home", "fr": "Stations près de chez moi" },
+      "label": {
+        "en": "Stations near my home",
+        "fr": "Stations près de chez moi"
+      },
       "description": {
         "en": "How many of the closest stations are proposed. 0 turns the suggestion off.",
         "fr": "Combien de stations parmi les plus proches sont proposées. 0 désactive la suggestion."
@@ -58,7 +73,10 @@
     {
       "key": "nearby_radius",
       "type": "number",
-      "label": { "en": "Search radius (m)", "fr": "Rayon de recherche (m)" },
+      "label": {
+        "en": "Search radius (m)",
+        "fr": "Rayon de recherche (m)"
+      },
       "description": {
         "en": "Only the stations within this distance of the house, in meters.",
         "fr": "Seulement les stations à moins de cette distance de la maison, en mètres."
@@ -71,7 +89,10 @@
     {
       "key": "watch",
       "type": "section",
-      "label": { "en": "Other stations (optional)", "fr": "Autres stations (facultatif)" },
+      "label": {
+        "en": "Other stations (optional)",
+        "fr": "Autres stations (facultatif)"
+      },
       "description": {
         "en": "To follow a station that is not near your home (work, school…): find its number with the “Find a station” button at the bottom of this page, and paste it here.",
         "fr": "Pour suivre une station qui n’est pas près de chez vous (travail, école…) : trouvez son numéro avec le bouton « Chercher une station » en bas de cette page, et collez-le ici."
@@ -80,18 +101,27 @@
     {
       "key": "stations",
       "type": "string",
-      "label": { "en": "Stations", "fr": "Stations" },
+      "label": {
+        "en": "Stations",
+        "fr": "Stations"
+      },
       "description": {
         "en": "Station numbers, separated by commas.",
         "fr": "Numéros de station, séparés par des virgules."
       },
       "required": false,
-      "placeholder": { "en": "1, 12", "fr": "1, 12" }
+      "placeholder": {
+        "en": "1, 12",
+        "fr": "1, 12"
+      }
     },
     {
       "key": "advanced",
       "type": "section",
-      "label": { "en": "Advanced", "fr": "Avancé" },
+      "label": {
+        "en": "Advanced",
+        "fr": "Avancé"
+      },
       "description": {
         "en": "The defaults suit almost everyone. One request serves every station.",
         "fr": "Les valeurs par défaut conviennent à presque tout le monde. Une seule requête sert toutes les stations."
@@ -100,7 +130,10 @@
     {
       "key": "poll_frequency",
       "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Rafraîchissement (s)" },
+      "label": {
+        "en": "Refresh interval (s)",
+        "fr": "Rafraîchissement (s)"
+      },
       "description": {
         "en": "How often the stations are read, in seconds (one minute minimum).",
         "fr": "Fréquence de lecture des stations, en secondes (une minute minimum)."
@@ -113,7 +146,10 @@
     {
       "key": "language",
       "type": "select",
-      "label": { "en": "Language of the values", "fr": "Langue des valeurs" },
+      "label": {
+        "en": "Language of the values",
+        "fr": "Langue des valeurs"
+      },
       "description": {
         "en": "Language of the feature names and of the texts published.",
         "fr": "Langue des noms de fonctionnalités et des textes publiés."
@@ -121,30 +157,164 @@
       "required": false,
       "default": "fr",
       "options": [
-        { "value": "fr", "label": { "en": "French", "fr": "Français" } },
-        { "value": "en", "label": { "en": "English", "fr": "Anglais" } }
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français"
+          }
+        },
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais"
+          }
+        }
       ]
     }
   ],
   "actions": [
     {
       "key": "search_stations",
-      "label": { "en": "Find a station", "fr": "Chercher une station" },
+      "label": {
+        "en": "Find a station",
+        "fr": "Chercher une station"
+      },
       "timeout_seconds": 30,
       "fields": [
         {
           "key": "query",
           "type": "string",
-          "label": { "en": "Station name or street", "fr": "Nom de la station ou rue" },
-          "placeholder": { "en": "Meriadeck", "fr": "Meriadeck" },
+          "label": {
+            "en": "Station name or street",
+            "fr": "Nom de la station ou rue"
+          },
+          "placeholder": {
+            "en": "Meriadeck",
+            "fr": "Meriadeck"
+          },
           "required": true
         }
       ]
     },
     {
       "key": "test_connection",
-      "label": { "en": "Test the connection", "fr": "Tester la connexion" },
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion"
+      },
       "timeout_seconds": 30
+    }
+  ],
+  "widgets": [
+    {
+      "key": "station",
+      "label": {
+        "en": "Le Vélo station",
+        "fr": "Station Le Vélo"
+      },
+      "description": {
+        "en": "Classic bikes, electric bikes and free docks of a station, in color when few are left.",
+        "fr": "Vélos musculaires, électriques et places libres d’une station, en couleur quand il en reste peu."
+      },
+      "icon": "disc",
+      "settings": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Station"
+          },
+          "required": true
+        },
+        {
+          "key": "threshold",
+          "type": "select",
+          "label": {
+            "en": "“Few left” from",
+            "fr": "« Peu » à partir de"
+          },
+          "description": {
+            "en": "Orange at this number or fewer, red at zero. Empty: 2.",
+            "fr": "Orange à ce nombre ou moins, rouge à zéro. Vide : 2."
+          },
+          "options": [
+            {
+              "value": "1",
+              "label": {
+                "en": "1",
+                "fr": "1"
+              }
+            },
+            {
+              "value": "2",
+              "label": {
+                "en": "2",
+                "fr": "2"
+              }
+            },
+            {
+              "value": "3",
+              "label": {
+                "en": "3",
+                "fr": "3"
+              }
+            },
+            {
+              "value": "5",
+              "label": {
+                "en": "5",
+                "fr": "5"
+              }
+            }
+          ]
+        },
+        {
+          "key": "history",
+          "type": "select",
+          "label": {
+            "en": "History",
+            "fr": "Historique"
+          },
+          "description": {
+            "en": "A chart of the bikes over time, drawn from the history Gladys keeps. Empty: no chart.",
+            "fr": "Une courbe des vélos dans le temps, tirée de l’historique gardé par Gladys. Vide : pas de courbe."
+          },
+          "options": [
+            {
+              "value": "none",
+              "label": {
+                "en": "No chart",
+                "fr": "Pas de courbe"
+              }
+            },
+            {
+              "value": "last-twelve-hours",
+              "label": {
+                "en": "Last 12 hours",
+                "fr": "12 dernières heures"
+              }
+            },
+            {
+              "value": "last-day",
+              "label": {
+                "en": "Last 24 hours",
+                "fr": "24 dernières heures"
+              }
+            },
+            {
+              "value": "last-week",
+              "label": {
+                "en": "Last week",
+                "fr": "Dernière semaine"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

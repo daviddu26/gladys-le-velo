@@ -137,6 +137,30 @@ test('the buttons answer', async (t) => {
   assert.match(testing.data.message.fr, /Près de Maison : 2 station/);
 });
 
+test('the widget shows a created station; a missing choice is explained', async (t) => {
+  const { gladys } = await start(t);
+  const [meriadeck] = gladys.fake.discoveredDevices;
+  await gladys.fake.deviceCreated(meriadeck);
+  const widget = await gladys.fake.widgetGet('station', {
+    settings: { device: meriadeck.external_id, threshold: '3', history: 'last-day' },
+    language: 'fr',
+  });
+  assert.equal(widget.success, true);
+  const { components } = widget.data.content;
+  assert.equal(components[0].text, 'Meriadeck');
+  assert.deepEqual(
+    components.filter((c) => c.type === 'value').map((c) => c.value),
+    [10, 5, 28],
+  );
+  assert.deepEqual(components.find((c) => c.type === 'chart').device_features, [
+    feature(meriadeck, 'mechanical'),
+    feature(meriadeck, 'electric'),
+  ]);
+
+  const empty = await gladys.fake.widgetGet('station', { settings: {}, language: 'fr' });
+  assert.match(empty.data.content.components[0].text.fr, /Choisissez une station/);
+});
+
 test('a station typed by hand is published; a wrong number is reported', async (t) => {
   const { gladys } = await start(t, {
     gladys: { config: { nearby_stations: 0, stations: '58, 4242' } },

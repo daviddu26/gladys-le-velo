@@ -10,6 +10,18 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Added
+
+- A "Le Vélo station" dashboard widget: the classic bikes, the electric bikes
+  and the free docks of a station, green, orange when few are left (threshold
+  of your choice), red when none, with the state of the station and, if asked,
+  a chart of the bikes over the last 12 hours, day or week.
+
+### Changed
+
+- A new cover image, in the style of the TBM integration: a classic bike and
+  an electric bike on the quays of Bordeaux.
+
 ## [0.1.0] - 2026-10-13
 
 ### Added

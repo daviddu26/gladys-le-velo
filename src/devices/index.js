@@ -93,6 +93,39 @@ export function findBlueprintByDevice(gladys, device, config) {
   );
 }
 
+/**
+ * Error raised when a widget points at a device the integration cannot read.
+ * It carries the explanation the widget displays.
+ */
+export class DeviceSelectionError extends Error {
+  constructor(userMessage) {
+    super(userMessage.en);
+    this.name = 'DeviceSelectionError';
+    this.userMessage = userMessage;
+  }
+}
+
+/**
+ * The blueprint behind the device a widget was set up with.
+ * @throws {DeviceSelectionError}
+ */
+export function findSelectedBlueprint(gladys, deviceExternalId, config, type = DEVICE_TYPE) {
+  if (typeof deviceExternalId !== 'string' || deviceExternalId.length === 0) {
+    throw new DeviceSelectionError({
+      en: 'Choose a Le Vélo station in the settings.',
+      fr: 'Choisissez une station Le Vélo dans les réglages.',
+    });
+  }
+  const blueprint = findBlueprintByDevice(gladys, { external_id: deviceExternalId }, config);
+  if (!blueprint || blueprint.type !== type) {
+    throw new DeviceSelectionError({
+      en: 'This device is no longer known to the integration: add it again, or choose another one.',
+      fr: 'Cet appareil n’est plus connu de l’intégration : ajoutez-le à nouveau, ou choisissez-en un autre.',
+    });
+  }
+  return blueprint;
+}
+
 // Gladys' poll ticks drift by a few milliseconds: a read due within the next
 // half-minute runs now, so a 120 s interval does not slip to 180 s.
 const POLL_TOLERANCE_MS = DEVICE_POLL_FREQUENCIES.EVERY_MINUTES / 2;

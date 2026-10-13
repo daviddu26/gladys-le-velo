@@ -72,6 +72,26 @@ l'arrêter, supprimez l'appareil dans Gladys.
 | Rafraîchissement (s)      | 60         | Fréquence de lecture, une minute minimum                  |
 | Langue des valeurs        | Français   | Langue des noms de fonctionnalités et des textes          |
 
+## Tableau de bord
+
+Le widget **Station Le Vélo** affiche une station d'un coup d'œil : le nom de la station, puis
+trois chiffres, **Musculaires**, **Électriques** et **Places libres**.
+
+- **Vert** : il en reste assez ; **orange** : il en reste peu ; **rouge** : il n'y en a plus ;
+  **gris** : la station ne loue pas (ou ne reprend pas) en ce moment.
+- Sous le nom : l'heure de la dernière mise à jour, ou l'état de la station quand elle n'est pas
+  entièrement en service (« Location suspendue »).
+
+Pour l'ajouter : **Tableau de bord → Modifier → Ajouter une box → Station Le Vélo**, puis :
+
+| Réglage             | Effet                                                                                             |
+| ------------------- | ------------------------------------------------------------------------------------------------- |
+| Station             | La station à afficher (un appareil déjà ajouté)                                                   |
+| « Peu » à partir de | Orange à ce nombre ou moins (1, 2, 3 ou 5 ; 2 par défaut)                                         |
+| Historique          | Une courbe des vélos musculaires et électriques sur 12 h, 24 h ou une semaine (aucune par défaut) |
+
+La courbe se remplit avec le temps : elle part du moment où la station a été ajoutée.
+
 ## Scènes
 
 Les fonctionnalités sont des capteurs Gladys ordinaires : utilisez le déclencheur **Changement

@@ -107,6 +107,15 @@ export function stateOf(status) {
 }
 
 /**
+ * The words of a state, for the widget caption: "Location suspendue".
+ * @param {string} state a key of LABELS.states (stateOf)
+ * @param {string} language
+ */
+export function stateLabel(state, language = 'fr') {
+  return LABELS[language].states[state];
+}
+
+/**
  * The summary sentence: "10 musculaires · 5 électriques · 28 places", or the
  * state when the station is not in service: "Hors service".
  * @param {object | undefined} status one station of parseStatus

@@ -68,6 +68,26 @@ to stop, delete the device in Gladys.
 | Refresh interval (s)  | 60      | How often the stations are read, one minute minimum |
 | Language of values    | French  | Language of the feature names and of the texts      |
 
+## Dashboard
+
+The **Le Vélo station** widget shows a station at a glance: its name, then three numbers,
+**Classic**, **Electric** and **Free docks**.
+
+- **Green**: enough left; **orange**: few left; **red**: none left; **grey**: the station does not
+  rent (or take bikes back) right now.
+- Under the name: the time of the last update, or the state of the station when it is not fully in
+  service ("Rentals suspended").
+
+To add it: **Dashboard → Edit → Add a box → Le Vélo station**, then:
+
+| Setting         | Effect                                                                                |
+| --------------- | ------------------------------------------------------------------------------------- |
+| Station         | The station to show (a device already added)                                          |
+| "Few left" from | Orange at this number or fewer (1, 2, 3 or 5; 2 by default)                           |
+| History         | A chart of the classic and electric bikes over 12 h, 24 h or a week (none by default) |
+
+The chart fills up over time: it starts when the station was added.
+
 ## Scenes
 
 The features are ordinary Gladys sensors: use the **Device state change** trigger. Examples:

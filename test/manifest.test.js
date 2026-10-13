@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { ACTIONS } from '../src/devices/index.js';
 import { DEFAULT_CONFIG } from '../src/config.js';
+import { HISTORY_OPTIONS, WIDGETS } from '../src/widgets.js';
 
 const manifest = JSON.parse(
   await readFile(new URL('../gladys-assistant-integration.json', import.meta.url), 'utf8'),
@@ -36,6 +37,27 @@ test('the manifest asks for the house location, the suggestions need it', () => 
 
 test('every manifest action has a handler, and vice versa', () => {
   assert.deepEqual(keysOf(manifest.actions).sort(), Object.keys(ACTIONS).sort());
+});
+
+test('every widget has a content handler, and vice versa', () => {
+  assert.deepEqual(keysOf(manifest.widgets).sort(), Object.keys(WIDGETS).sort());
+});
+
+test('the history options are the windows the code knows', () => {
+  const widget = manifest.widgets.find((entry) => entry.key === 'station');
+  const history = widget.settings.find((field) => field.key === 'history');
+  assert.deepEqual(
+    history.options.map((option) => option.value).filter((value) => value !== 'none'),
+    Object.keys(HISTORY_OPTIONS),
+  );
+});
+
+test('dynamic selects declare a source and no static options', () => {
+  const fields = (manifest.widgets ?? []).flatMap((widget) => widget.settings ?? []);
+  for (const field of fields.filter((f) => f.source !== undefined)) {
+    assert.equal(field.source, 'devices');
+    assert.equal(field.options, undefined, field.key);
+  }
 });
 
 test('config_schema defaults stay consistent with DEFAULT_CONFIG', () => {
