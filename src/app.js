@@ -17,7 +17,7 @@ import {
   createPoller,
 } from './devices/index.js';
 import { getSuggestions, refreshSuggestions } from './devices/suggestions.js';
-import { WIDGETS, refreshWidgets } from './widgets.js';
+import { WIDGETS, mapImage, refreshWidgets } from './widgets.js';
 
 const logger = createLogger({ name: 'app' });
 
@@ -139,6 +139,8 @@ export function registerHandlers(gladys) {
   for (const [key, widget] of Object.entries(WIDGETS)) {
     gladys.onWidgetGet(key, (request) => widget.get(gladys, { ...request, config }));
   }
+  // The images of the widgets: the map, rendered when its card was asked for.
+  gladys.onWidgetGetImage((key) => mapImage(key));
 
   // Configuration updated by the user.
   gladys.onConfigUpdated(async (newConfig) => {

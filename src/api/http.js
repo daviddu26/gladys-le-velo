@@ -65,3 +65,28 @@ export async function fetchJson(url) {
     throw new VeloApiError(`Le Vélo API answered something that is not JSON: ${err.message}`);
   }
 }
+
+/**
+ * GET a binary document (a map tile).
+ * @param {string} url
+ * @param {{ timeoutMs?: number }} [options]
+ * @returns {Promise<Buffer>}
+ * @throws {VeloApiError}
+ */
+export async function fetchBuffer(url, { timeoutMs = TIMEOUT_MS } = {}) {
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: { 'User-Agent': USER_AGENT },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+  } catch (err) {
+    throw new VeloApiError(`${new URL(url).host} unreachable: ${err.message}`);
+  }
+  if (!response.ok) {
+    throw new VeloApiError(`${new URL(url).host} answered HTTP ${response.status}`, {
+      status: response.status,
+    });
+  }
+  return Buffer.from(await response.arrayBuffer());
+}

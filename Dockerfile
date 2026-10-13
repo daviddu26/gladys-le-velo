@@ -11,7 +11,9 @@
 FROM node:24-alpine
 
 # dumb-init: handles signals (SIGTERM) correctly for a graceful shutdown.
-RUN apk add --no-cache dumb-init
+# font-dejavu + fontconfig: the text of the map widget (src/map.js) is drawn
+# by sharp, which finds its fonts through fontconfig; the image has none.
+RUN apk add --no-cache dumb-init font-dejavu fontconfig
 
 WORKDIR /app
 

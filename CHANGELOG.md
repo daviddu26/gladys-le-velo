@@ -10,6 +10,14 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Added
+
+- A "Le Vélo map" dashboard widget: the house and the stations on an
+  OpenStreetMap background, each with a pill of its classic and electric
+  bikes (or of its free docks) in the colors of the station widget, and the
+  same stations listed by distance under the map. The stations you added, or
+  the ones near the house.
+
 ### Changed
 
 - The stations are refreshed every 30 seconds instead of every minute (the

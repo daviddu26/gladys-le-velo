@@ -88,6 +88,23 @@ To add it: **Dashboard → Edit → Add a box → Le Vélo station**, then:
 
 The chart fills up over time: it starts when the station was added.
 
+### "Le Vélo map" widget
+
+The house and the stations on an OpenStreetMap background. Each station carries a pill with its
+bikes (classic, then electric after the bolt) or its free docks, in the same colors as the Station
+widget. Under the map, the same stations by distance, with their names.
+
+To add it: **Dashboard → Edit → Add a box → Le Vélo map**, then:
+
+| Setting         | Effect                                                                           |
+| --------------- | -------------------------------------------------------------------------------- |
+| Stations        | **My stations** (the ones added, by default) or **Near my home** (search radius) |
+| Show            | **Bikes** (by default) or **Free docks**                                         |
+| "Few left" from | Orange at this number or fewer (2 by default)                                    |
+
+The map is an image: no zoom, no click. It frames itself to show the house and every station (10 at
+most). The background is downloaded once from OpenStreetMap and kept 30 days in the container.
+
 ## Scenes
 
 The features are ordinary Gladys sensors: use the **Device state change** trigger. Examples:
@@ -119,3 +136,7 @@ Station availability: Bordeaux Métropole, data set
 in the GBFS format, under the [Licence Ouverte](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).
 The list of stations is read once a day and kept in the container; the availability of the whole
 network is read in a single request every 30 seconds, however many stations are followed.
+
+Map background: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, tiles of the
+OpenStreetMap Foundation server, downloaded once and kept 30 days in the container, as its
+[usage policy](https://operations.osmfoundation.org/policies/tiles/) asks.

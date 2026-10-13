@@ -81,3 +81,21 @@ jobs:
           context: .
           platforms: linux/amd64
           push: false
+          load: true
+          tags: gladys-le-velo:ci
+
+      # The map widget draws its text with sharp and the fonts of the image:
+      # without them, the pills come out empty and nothing fails. Draw a
+      # text in the real image and check that it left dark pixels.
+      - name: Text rendering in the image
+        run: |
+          docker run --rm --entrypoint node gladys-le-velo:ci --input-type=module -e "
+            import sharp from 'sharp';
+            const svg = '<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"60\">'
+              + '<rect width=\"200\" height=\"60\" fill=\"#fff\"/>'
+              + '<text x=\"10\" y=\"42\" font-family=\"DejaVu Sans\" font-weight=\"bold\" font-size=\"36\">12 Vélo</text></svg>';
+            const { data } = await sharp(Buffer.from(svg)).greyscale().raw().toBuffer({ resolveWithObject: true });
+            const dark = data.filter((v) => v < 128).length;
+            console.log('dark pixels:', dark);
+            if (dark < 200) { console.error('No text drawn: fonts missing in the image'); process.exit(1); }
+          "

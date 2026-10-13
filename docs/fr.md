@@ -92,6 +92,24 @@ Pour l'ajouter : **Tableau de bord → Modifier → Ajouter une box → Station 
 
 La courbe se remplit avec le temps : elle part du moment où la station a été ajoutée.
 
+### Widget « Carte Le Vélo »
+
+La maison et les stations sur un plan OpenStreetMap. Chaque station porte une pastille avec ses
+vélos (musculaires, puis électriques après l'éclair) ou ses places libres, dans les mêmes couleurs
+que le widget Station. Sous la carte, les mêmes stations par distance, avec leur nom.
+
+Pour l'ajouter : **Tableau de bord → Modifier → Ajouter une box → Carte Le Vélo**, puis :
+
+| Réglage             | Effet                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------- |
+| Stations            | **Mes stations** (celles ajoutées, par défaut) ou **Près de chez moi** (rayon de recherche) |
+| Afficher            | **Vélos** (par défaut) ou **Places libres**                                                 |
+| « Peu » à partir de | Orange à ce nombre ou moins (2 par défaut)                                                  |
+
+La carte est une image : on ne peut pas zoomer ni cliquer dessus. Le cadrage se fait tout seul
+pour montrer la maison et toutes les stations (10 au plus). Le fond de plan est téléchargé une fois
+chez OpenStreetMap puis gardé 30 jours dans le conteneur.
+
 ## Scènes
 
 Les fonctionnalités sont des capteurs Gladys ordinaires : utilisez le déclencheur **Changement
@@ -125,3 +143,7 @@ au format GBFS, sous [Licence Ouverte](https://www.etalab.gouv.fr/licence-ouvert
 La liste des stations est relue une fois par jour et gardée dans le conteneur ; la disponibilité
 de tout le réseau est lue en une seule requête toutes les 30 secondes, quel que soit le nombre de stations
 suivies.
+
+Fond de carte : © les contributeurs d'[OpenStreetMap](https://www.openstreetmap.org/copyright),
+tuiles du serveur de la fondation OpenStreetMap, téléchargées une fois et gardées 30 jours dans le
+conteneur, comme le demandent ses [règles d'usage](https://operations.osmfoundation.org/policies/tiles/).

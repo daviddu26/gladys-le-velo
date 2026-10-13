@@ -9,6 +9,8 @@ import { createFakeGladys } from '@gladysassistant/integration-sdk/testing';
 import { registerHandlers } from '../src/app.js';
 import { clearStatusCache, setDirectory } from '../src/api/gbfs.js';
 import { clearSuggestions } from '../src/devices/suggestions.js';
+import { clearMaps } from '../src/widgets.js';
+import { validateWidgetContent, validateWidgetImage } from '@gladysassistant/integration-sdk';
 import { MERIADECK_HOUSE, NOW, stationStatusPayload } from './helpers/fixtures.js';
 import { stubFetch } from './helpers/stubFetch.js';
 
@@ -18,6 +20,7 @@ beforeEach(async () => {
   setDirectory(null);
   clearSuggestions();
   clearStatusCache();
+  clearMaps();
 });
 
 async function start(t, options = {}) {
@@ -181,6 +184,44 @@ test('the widget shows a created station; a missing choice is explained', async 
 
   const empty = await gladys.fake.widgetGet('station', { settings: {}, language: 'fr' });
   assert.match(empty.data.content.components[0].text.fr, /Choisissez une station/);
+});
+
+test('the map widget: my stations, then the stations near the house', async (t) => {
+  const { gladys } = await start(t);
+  const [meriadeck] = gladys.fake.discoveredDevices;
+
+  const none = await gladys.fake.widgetGet('map', { settings: {}, language: 'fr' });
+  assert.match(none.data.content.components[0].text.fr, /Aucune station suivie/);
+
+  await gladys.fake.deviceCreated(meriadeck);
+  const mine = await gladys.fake.widgetGet('map', { settings: {}, language: 'fr' });
+  const { components } = mine.data.content;
+  assert.deepEqual(validateWidgetContent(mine.data.content), []);
+  assert.equal(components[0].text.fr, 'Mes stations Le Vélo');
+  const image = components.find((c) => c.type === 'image');
+  const status = components.find((c) => c.type === 'status');
+  assert.deepEqual(
+    status.items.map((item) => [item.label, item.value.fr, item.color]),
+    [['Meriadeck · 0 m', '10 musc. · 5 élec.', 'success']],
+  );
+  const served = await gladys.fake.widgetGetImage(image.key);
+  assert.equal(served.success, true);
+  assert.deepEqual(validateWidgetImage(served.data.image), []);
+
+  const near = await gladys.fake.widgetGet('map', {
+    settings: { scope: 'nearby', show: 'docks' },
+    language: 'fr',
+  });
+  const rows = near.data.content.components.find((c) => c.type === 'status').items;
+  assert.deepEqual(
+    rows.map((item) => [item.label, item.value.fr]),
+    [
+      ['Meriadeck · 0 m', '28 places'],
+      ['Saint-Bruno - Hôtel de Région · 466 m', '8 places'],
+    ],
+  );
+  // Other counts, another image.
+  assert.notEqual(near.data.content.components.find((c) => c.type === 'image').key, image.key);
 });
 
 test('a station typed by hand is published; a wrong number is reported', async (t) => {

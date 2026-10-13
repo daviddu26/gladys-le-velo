@@ -9,7 +9,9 @@ TBM** (formerly V³ / VCub), the bike-share service of Bordeaux Métropole, into
   of the station and a ready-made summary, refreshed every 30 seconds;
 - **the stations near your home proposed by themselves** in the Discover tab, from the address of
   the house in Gladys;
-- any other station added by its number, found with the **Find a station** button.
+- any other station added by its number, found with the **Find a station** button;
+- **dashboard widgets**: a station (tiles in color, history chart) and a map of the house and the
+  stations on OpenStreetMap.
 
 **No account, no key:** the availability is open data (GBFS 3.0).
 
@@ -48,4 +50,8 @@ workflow. See [CLAUDE.md](CLAUDE.md) for the architecture and the conventions.
 - Stations and availability: Bordeaux Métropole, data set
   [Station Le Vélo en temps réel](https://transport.data.gouv.fr/datasets/station-le-velo-en-temps-reel-1)
   (GBFS), [Licence Ouverte / Open Licence](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).
+- Map background of the map widget: © [OpenStreetMap](https://www.openstreetmap.org/copyright)
+  contributors (ODbL), tiles of the OpenStreetMap Foundation, used within its
+  [tile usage policy](https://operations.osmfoundation.org/policies/tiles/): identified User-Agent,
+  2 downloads at once at most, tiles kept 30 days.
 - Code: Apache License 2.0.

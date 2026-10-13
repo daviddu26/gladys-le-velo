@@ -315,6 +315,118 @@
           ]
         }
       ]
+    },
+    {
+      "key": "map",
+      "label": {
+        "en": "Le Vélo map",
+        "fr": "Carte Le Vélo"
+      },
+      "description": {
+        "en": "The house and the stations on a map, with their bikes or their free docks.",
+        "fr": "La maison et les stations sur une carte, avec leurs vélos ou leurs places libres."
+      },
+      "icon": "map",
+      "settings": [
+        {
+          "key": "scope",
+          "type": "select",
+          "label": {
+            "en": "Stations",
+            "fr": "Stations"
+          },
+          "description": {
+            "en": "The stations you added, or the closest to the house (search radius of the configuration). Empty: the stations you added.",
+            "fr": "Les stations que vous avez ajoutées, ou les plus proches de la maison (rayon de recherche de la configuration). Vide : les stations ajoutées."
+          },
+          "options": [
+            {
+              "value": "followed",
+              "label": {
+                "en": "My stations",
+                "fr": "Mes stations"
+              }
+            },
+            {
+              "value": "nearby",
+              "label": {
+                "en": "Near my home",
+                "fr": "Près de chez moi"
+              }
+            }
+          ]
+        },
+        {
+          "key": "show",
+          "type": "select",
+          "label": {
+            "en": "Show",
+            "fr": "Afficher"
+          },
+          "description": {
+            "en": "What each station shows on the map. Empty: the bikes.",
+            "fr": "Ce que chaque station affiche sur la carte. Vide : les vélos."
+          },
+          "options": [
+            {
+              "value": "bikes",
+              "label": {
+                "en": "Bikes (classic and electric)",
+                "fr": "Vélos (musculaires et électriques)"
+              }
+            },
+            {
+              "value": "docks",
+              "label": {
+                "en": "Free docks",
+                "fr": "Places libres"
+              }
+            }
+          ]
+        },
+        {
+          "key": "threshold",
+          "type": "select",
+          "label": {
+            "en": "“Few left” from",
+            "fr": "« Peu » à partir de"
+          },
+          "description": {
+            "en": "Orange at this number or fewer, red at zero. Empty: 2.",
+            "fr": "Orange à ce nombre ou moins, rouge à zéro. Vide : 2."
+          },
+          "options": [
+            {
+              "value": "1",
+              "label": {
+                "en": "1",
+                "fr": "1"
+              }
+            },
+            {
+              "value": "2",
+              "label": {
+                "en": "2",
+                "fr": "2"
+              }
+            },
+            {
+              "value": "3",
+              "label": {
+                "en": "3",
+                "fr": "3"
+              }
+            },
+            {
+              "value": "5",
+              "label": {
+                "en": "5",
+                "fr": "5"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

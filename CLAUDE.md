@@ -8,9 +8,9 @@ contributors.
 A Gladys Assistant **external integration**: a Node.js service (Node 22+, ESM,
 no build step) that runs in its own sandboxed Docker container and talks to
 Gladys through
-[`@gladysassistant/integration-sdk`](https://github.com/GladysAssistant/integration-sdk-js),
-its only runtime dependency. Sibling of `daviddu26/gladys-tbm`, with the same
-tooling and conventions.
+[`@gladysassistant/integration-sdk`](https://github.com/GladysAssistant/integration-sdk-js).
+Its runtime dependencies are that SDK and `sharp` (the map image). Sibling of
+`daviddu26/gladys-tbm`, with the same tooling and conventions.
 
 ## Commands
 
@@ -44,6 +44,8 @@ src/api/gbfs.js                   feeds, parsing, directory (a day in /data), sh
 src/devices/index.js              registry: configured + suggested + created devices, poller, actions
 src/devices/station.js            the device type: a station, its six features
 src/devices/suggestions.js        the stations near the house, and the house location
+src/widgets.js                    dashboard widgets "station" and "map", map images by key
+src/map.js                        map rendering: OSM tiles (cached in /data/tiles), markers, sharp
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
 docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
@@ -73,6 +75,21 @@ test/helpers/fixtures.js          GBFS answers shaped like the real ones (2026-1
   docks (`parseStatus`): what a threshold scene expects.
 - The device param `station` rebuilds a created device: never rename it. The
   platform id is the GBFS `station_id`.
+
+## The map widget
+
+- Gladys has no map component: the widget content holds an `image` whose key
+  is a hash of what it shows (`map-<sha1>`); the rendering starts when the card
+  is built and `onWidgetGetImage` awaits it. JPEG 800 × 450, well under the
+  300 KB limit.
+- OpenStreetMap tile policy: User-Agent of the integration, 2 downloads at
+  once, tiles kept 30 days in `/data/tiles`, attribution drawn on the image.
+  Downloads stop after 6 s so the image answers within Gladys' 15 s.
+- tile.openstreetmap.org is out of reach of the development sandbox: the
+  tests use a plain tile (`test/helpers/stubFetch.js`).
+- The text is drawn by sharp through fontconfig: the Dockerfile installs
+  `font-dejavu fontconfig`, and the CI draws a text in the built image to
+  catch a missing font (the pills would come out empty, silently).
 
 ## Rules
 
