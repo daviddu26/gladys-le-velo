@@ -80,11 +80,11 @@ The **Le Vélo station** widget shows a station at a glance: its name, then thre
 
 To add it: **Dashboard → Edit → Add a box → Le Vélo station**, then:
 
-| Setting         | Effect                                                                                |
-| --------------- | ------------------------------------------------------------------------------------- |
-| Station         | The station to show (a device already added)                                          |
-| "Few left" from | Orange at this number or fewer (1, 2, 3 or 5; 2 by default)                           |
-| History         | A chart of the classic and electric bikes over 12 h, 24 h or a week (none by default) |
+| Setting         | Effect                                                                                                          |
+| --------------- | --------------------------------------------------------------------------------------------------------------- |
+| Station         | The station to show (a device already added)                                                                    |
+| "Few left" from | Orange at this number or fewer (1, 2, 3 or 5; 2 by default)                                                     |
+| History         | A chart of the classic bikes, the electric bikes and the free docks over 12 h, 24 h or a week (none by default) |
 
 The chart fills up over time: it starts when the station was added.
 

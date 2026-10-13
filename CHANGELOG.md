@@ -17,7 +17,8 @@ the notes of the version's GitHub Release.
 - A "Le Vélo station" dashboard widget: the classic bikes, the electric bikes
   and the free docks of a station, green, orange when few are left (threshold
   of your choice), red when none, with the state of the station and, if asked,
-  a chart of the bikes over the last 12 hours, day or week.
+  a chart of the classic bikes, the electric bikes and the free docks over
+  the last 12 hours, day or week.
 
 ### Changed
 

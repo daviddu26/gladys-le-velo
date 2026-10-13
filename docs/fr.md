@@ -84,11 +84,11 @@ trois chiffres, **Musculaires**, **Électriques** et **Places libres**.
 
 Pour l'ajouter : **Tableau de bord → Modifier → Ajouter une box → Station Le Vélo**, puis :
 
-| Réglage             | Effet                                                                                             |
-| ------------------- | ------------------------------------------------------------------------------------------------- |
-| Station             | La station à afficher (un appareil déjà ajouté)                                                   |
-| « Peu » à partir de | Orange à ce nombre ou moins (1, 2, 3 ou 5 ; 2 par défaut)                                         |
-| Historique          | Une courbe des vélos musculaires et électriques sur 12 h, 24 h ou une semaine (aucune par défaut) |
+| Réglage             | Effet                                                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Station             | La station à afficher (un appareil déjà ajouté)                                                                                 |
+| « Peu » à partir de | Orange à ce nombre ou moins (1, 2, 3 ou 5 ; 2 par défaut)                                                                       |
+| Historique          | Les courbes des vélos musculaires, des vélos électriques et des places libres sur 12 h, 24 h ou une semaine (aucune par défaut) |
 
 La courbe se remplit avec le temps : elle part du moment où la station a été ajoutée.
 

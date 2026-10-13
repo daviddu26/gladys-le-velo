@@ -280,8 +280,8 @@
             "fr": "Historique"
           },
           "description": {
-            "en": "A chart of the bikes over time, drawn from the history Gladys keeps. Empty: no chart.",
-            "fr": "Une courbe des vélos dans le temps, tirée de l’historique gardé par Gladys. Vide : pas de courbe."
+            "en": "A chart of the classic bikes, the electric bikes and the free docks over time, drawn from the history Gladys keeps. Empty: no chart.",
+            "fr": "Les courbes des vélos musculaires, des vélos électriques et des places libres dans le temps, tirées de l’historique gardé par Gladys. Vide : pas de courbe."
           },
           "options": [
             {

@@ -155,6 +155,7 @@ test('the widget shows a created station; a missing choice is explained', async 
   assert.deepEqual(components.find((c) => c.type === 'chart').device_features, [
     feature(meriadeck, 'mechanical'),
     feature(meriadeck, 'electric'),
+    feature(meriadeck, 'docks'),
   ]);
 
   const empty = await gladys.fake.widgetGet('station', { settings: {}, language: 'fr' });

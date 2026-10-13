@@ -6,7 +6,11 @@ import { parseStatus, parseVehicleTypes } from '../src/api/gbfs.js';
 import { stationStatusPayload, vehicleTypesPayload } from './helpers/fixtures.js';
 
 const status = parseStatus(stationStatusPayload(), parseVehicleTypes(vehicleTypesPayload()));
-const featureIds = { mechanical: 'ext:1:mechanical', electric: 'ext:1:electric' };
+const featureIds = {
+  mechanical: 'ext:1:mechanical',
+  electric: 'ext:1:electric',
+  docks: 'ext:1:docks',
+};
 
 test('colors: red at zero, orange up to the threshold, grey when closed', () => {
   assert.equal(countColor(0, 2), 'danger');
@@ -60,14 +64,18 @@ test('a station that does not rent says so, its bikes in grey', () => {
   );
 });
 
-test('the history chart is bound to the two counters', () => {
+test('the history chart is bound to the bikes and the free docks', () => {
   const content = stationContent({ name: 'Meriadeck' }, status['1'], {
     featureIds,
     history: 'last-day',
   });
   assert.deepEqual(validateWidgetContent(content), []);
   const chart = content.components.find((component) => component.type === 'chart');
-  assert.deepEqual(chart.device_features, [featureIds.mechanical, featureIds.electric]);
+  assert.deepEqual(chart.device_features, [
+    featureIds.mechanical,
+    featureIds.electric,
+    featureIds.docks,
+  ]);
   assert.equal(chart.interval, 'last-day');
 });
 

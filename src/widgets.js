@@ -9,8 +9,9 @@
 //     orange when few are left (the threshold of the settings), red at zero;
 //   - a caption: the state when the station is not fully in service, else the
 //     time of the last report;
-//   - optionally, the history of the bikes (a chart bound to the features,
-//     drawn by Gladys from the history it keeps): when the station empties.
+//   - optionally, the history of the bikes and of the free docks (a chart
+//     bound to the features, drawn by Gladys from the history it keeps): when
+//     the station empties, and when it is full.
 //
 // Nothing here throws at the dashboard: a device removed, or the API down,
 // renders as a card saying so — an empty or failed widget tells nothing.
@@ -92,17 +93,19 @@ const clock = new Intl.DateTimeFormat('fr-FR', {
 
 const LABELS = {
   fr: {
+    bikes: 'Vélos',
     mechanical: 'Musculaires',
     electric: 'Électriques',
     docks: 'Places libres',
-    history: 'Vélos disponibles',
+    history: 'Vélos et places libres',
     reported: (time) => `Mis à jour à ${time}.`,
   },
   en: {
+    bikes: 'Bikes',
     mechanical: 'Classic',
     electric: 'Electric',
     docks: 'Free docks',
-    history: 'Bikes available',
+    history: 'Bikes and free docks',
     reported: (time) => `Updated at ${time}.`,
   },
 };
@@ -112,8 +115,8 @@ const LABELS = {
  * @param {{ name: string }} info
  * @param {object | undefined} status one station of parseStatus
  * @param {{ threshold?: number, history?: string | null,
- *   featureIds?: { mechanical: string, electric: string } }} [options]
- *   `featureIds`: the external ids of the two counters, for the chart
+ *   featureIds?: { mechanical: string, electric: string, docks: string } }} [options]
+ *   `featureIds`: the external ids of the three counters, for the chart
  */
 export function stationContent(
   info,
@@ -153,7 +156,7 @@ export function stationContent(
   if (status.mechanical === null) {
     // A feed without the split by kind: the total, honestly.
     components.push(
-      tile('history', status.bikes, 'disc', countColor(status.bikes, threshold, status.renting)),
+      tile('bikes', status.bikes, 'disc', countColor(status.bikes, threshold, status.renting)),
     );
   } else {
     components.push(
@@ -181,7 +184,7 @@ export function stationContent(
     components.push({
       type: 'chart',
       chart_type: WIDGET_CHART_TYPES.STEPLINE,
-      device_features: [featureIds.mechanical, featureIds.electric],
+      device_features: [featureIds.mechanical, featureIds.electric, featureIds.docks],
       interval: history,
       title: { en: LABELS.en.history, fr: LABELS.fr.history },
     });
@@ -208,6 +211,7 @@ export const WIDGETS = {
           featureIds: {
             mechanical: ids.feature(FEATURES.mechanical),
             electric: ids.feature(FEATURES.electric),
+            docks: ids.feature(FEATURES.docks),
           },
         });
       } catch (err) {
