@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-13
+
 ### Added
 
 - A "Le Vélo map" dashboard widget: the house and the stations on an
@@ -55,7 +57,8 @@ the notes of the version's GitHub Release.
 - The stations near the house proposed in the Discover tab, others added by
   number, and a "Find a station" button to get those numbers.
 
-[Unreleased]: https://github.com/daviddu26/gladys-le-velo/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/daviddu26/gladys-le-velo/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/daviddu26/gladys-le-velo/compare/v0.3.0...v1.0.0
 [0.3.0]: https://github.com/daviddu26/gladys-le-velo/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/daviddu26/gladys-le-velo/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/daviddu26/gladys-le-velo/releases/tag/v0.1.0

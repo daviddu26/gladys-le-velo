@@ -6,8 +6,8 @@
     "en": "Bikes and free docks of the Le Vélo stations (Bordeaux), classic and electric apart.",
     "fr": "Vélos et places libres des stations Le Vélo (Bordeaux), musculaires et électriques à part."
   },
-  "version": "0.3.0",
-  "docker_image": "ghcr.io/daviddu26/gladys-le-velo:0.3.0",
+  "version": "1.0.0",
+  "docker_image": "ghcr.io/daviddu26/gladys-le-velo:1.0.0",
   "gladys_version": ">=5.1.0",
   "cover_image": "https://raw.githubusercontent.com/daviddu26/gladys-le-velo/main/cover.png",
   "categories": ["services"],
