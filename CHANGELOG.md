@@ -20,7 +20,7 @@ the notes of the version's GitHub Release.
 ### Changed
 
 - A new cover image, in the style of the TBM integration: a classic bike and
-  an electric bike on the quays of Bordeaux.
+  an electric bike on a cycle lane along the quays of Bordeaux.
 
 ## [0.1.0] - 2026-10-13
 
