@@ -82,9 +82,10 @@ test('section fields are purely presentational', () => {
   }
 });
 
-test('the categories are known to the declared Gladys version', () => {
-  assert.match(manifest.gladys_version, />=\s*5\.1\.0/);
+test('the categories and countries are known to the declared Gladys version', () => {
+  assert.match(manifest.gladys_version, />=\s*5\.3\.0/, 'countries needs Gladys 5.3');
   assert.ok(manifest.categories.length >= 1 && manifest.categories.length <= 3);
+  assert.deepEqual(manifest.countries, ['FR'], 'Bordeaux bike sharing only');
 });
 
 test('the manifest version is the package version, and the image is tagged with it', () => {
